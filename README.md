@@ -1,76 +1,126 @@
-# 🏠 Nashville Housing Data Cleaning Project
+# 📊 Nashville Housing Data Cleaning (SQL Project)
 
-## 📋 Project Overview
-This project demonstrates my ability to clean and prepare real-world data using **SQL** — focusing on accuracy, consistency, and structure.  
-I used the **Nashville Housing Dataset** to showcase how raw housing records can be transformed into a clean, analysis-ready table using only SQL in **SQL Server Management Studio (SSMS)**.
+## 📌 Overview
+This project focuses on cleaning and transforming a real-world housing dataset using SQL to make it analysis-ready.
 
-The goal: turn messy data into reliable insights while following best practices for data cleaning.
-
----
-
-## 🧰 Tools & Technologies
-- **SQL Server Management Studio (SSMS)**
-- **T-SQL** (Transact-SQL)
-- **Nashville Housing Dataset (Kaggle)**
+The dataset contains missing values, duplicate records, and unstructured fields, reflecting common data quality issues faced in real business environments.
 
 ---
 
-## 🧹 Key Data Cleaning Steps
-The following operations were performed within SQL to clean and standardize the dataset:
-
-1. **Standardized Date Formats**  
-   - Converted `SaleDate` fields into a consistent `DATE` format for accurate time-based analysis.
-
-2. **Populated Missing Property Addresses**  
-   - Filled in null address values using matching `ParcelID` data from duplicate entries.
-
-3. **Split Combined Address Fields**  
-   - Parsed full address strings into separate columns: `Address`, `City`, and `State`.
-
-4. **Normalized Owner Address Data**  
-   - Broke owner address data into distinct columns for better usability and joins.
-
-5. **Standardized Categorical Values**  
-   - Unified inconsistent labels in the `SoldAsVacant` column (e.g., “Y/N” → “Yes/No”).
-
-6. **Removed Duplicates**  
-   - Identified and removed duplicate records based on unique property and sale combinations.
-
-7. **Dropped Unused Columns**  
-   - Eliminated redundant or irrelevant columns to keep the dataset lean and focused.
+## 🛠️ Tools & Technologies
+- SQL (T-SQL)
+- Microsoft SQL Server
 
 ---
 
-## 📊 Why This Project Matters
-Clean data is the foundation of every good analysis.  
-This project highlights:
-- My ability to **identify and correct data quality issues**
-- Use of **SQL string, date, and conditional functions**
-- Attention to **data integrity and reproducibility**
-
-It’s a great example of how I approach **real-world data preparation** — methodical, readable, and efficient.
+## 📂 Dataset
+- Total Records: 56,477  
+- Source Table: portproject2.dbo.NashvilleHousing  
+- Working Table: NashvilleHousing_Clean  
 
 ---
 
-## 🚀 How to Run
-1. Open the `.sql` file in **SQL Server Management Studio (SSMS)**  
-2. Import the **Nashville Housing Dataset** into your SQL environment  
-3. Execute the SQL script step by step — each section is commented and logically structured  
-4. Review the final cleaned table for analysis or visualization
+## ⚙️ Data Cleaning Process
+
+### 1. Data Duplication
+Created a working table to preserve raw data integrity.
+
+SQL:
+SELECT *
+INTO NashvilleHousing_Clean
+FROM portproject2.dbo.NashvilleHousing;
 
 ---
 
-## 🧠 Key Takeaways
-- Strong grasp of SQL cleaning functions (`UPDATE`, `ALTER`, `JOIN`, `CASE`, etc.)  
-- Practical experience preparing housing data for analytics  
-- Emphasis on readable, well-documented SQL scripts
+### 2. Handling Missing Data
+- Identified missing PropertyAddress values (29 records)
+- Filled missing values using ParcelID-based self-join logic
+- Addressed large-scale null fields (30,000+ rows in owner-related columns)
 
 ---
 
-## 📂 File
-- `Nashville Housing Data Cleaning Project.sql` — full SQL cleaning script
+### 3. Data Standardization
+- Converted SaleDate into consistent DATE format
+- Standardized SoldAsVacant values:
+  - 'Y' → 'Yes'
+  - 'N' → 'No'
 
 ---
 
-## 💬 Connect
-If you’d like to discuss this project or my data workflow, feel free to reach out or connect on **[LinkedIn](#www.linkedin.com/in/mkhanyisi-zulu-75bba5270)**.
+### 4. Data Transformation
+Split unstructured address fields into usable columns:
+
+Property Address →
+- PropertySplitAddress
+- PropertySplitCity
+
+Owner Address →
+- OwnerSplitAddress
+- OwnerSplitCity
+- OwnerSplitState
+
+Techniques used:
+- SUBSTRING
+- CHARINDEX
+- PARSENAME
+
+---
+
+### 5. Duplicate Detection
+Identified duplicate records using ROW_NUMBER() with multiple business keys:
+
+SQL:
+ROW_NUMBER() OVER (
+    PARTITION BY ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference
+    ORDER BY UniqueID
+) AS row_num
+
+---
+
+### 6. Data Reduction
+Removed unnecessary columns to improve dataset usability:
+- OwnerAddress  
+- TaxDistrict  
+- PropertyAddress  
+- SaleDate  
+
+---
+
+### 7. Data Validation
+Performed validation checks:
+- Verified row counts after transformations  
+- Checked for remaining null values  
+- Ensured categorical consistency  
+
+---
+
+## 📈 Key Results
+- Processed dataset with 56,000+ records  
+- Reduced missing PropertyAddress values from 29 to 0  
+- Standardized categorical variables for analysis  
+- Structured previously unorganized address fields  
+- Improved dataset readiness for analytics and reporting  
+
+---
+
+## 💡 Skills Demonstrated
+- Data cleaning and preprocessing  
+- SQL joins, CTEs, and window functions  
+- Handling missing and inconsistent data  
+- Data transformation and normalization  
+- Data validation and quality assurance  
+
+---
+
+## 🚀 Future Improvements
+- Build a Power BI dashboard using the cleaned dataset  
+- Add before vs after data quality comparison metrics  
+- Optimize queries using indexing  
+- Automate cleaning pipeline using ETL tools  
+
+---
+
+## 📎 How to Use
+1. Load the raw dataset into SQL Server  
+2. Run the SQL script step-by-step  
+3. Use the cleaned dataset for analysis or visualization  
